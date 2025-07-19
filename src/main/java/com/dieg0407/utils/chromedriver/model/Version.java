@@ -8,10 +8,10 @@ public record Version(
 ) {
   public static Version fromRawVersion(String version) {
     if (!version.matches("\\d+\\.\\d+\\.\\d+\\.\\d+")) {
-      throw new IllegalArgumentException("Version string must be in the format 'major.minor.patch.build'");
+      throw new IllegalArgumentException("Version string must be in the format 'major.minor.patch.build' instead got: '" + version + "'");
     }
     final String[] parts = version.split("\\.");
-    assert parts.length == 4 : "Directory name should have exactly 4 parts";
+    assert parts.length == 4 : "raw version should have exactly 4 parts";
 
     return new Version(
         Short.parseShort(parts[0]),

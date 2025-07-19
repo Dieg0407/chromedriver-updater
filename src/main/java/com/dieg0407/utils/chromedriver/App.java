@@ -1,12 +1,12 @@
 package com.dieg0407.utils.chromedriver;
 
 import com.dieg0407.utils.chromedriver.model.Os;
+import com.dieg0407.utils.chromedriver.model.ProcessHandler;
 import com.dieg0407.utils.chromedriver.model.Version;
 import java.util.concurrent.Callable;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
-import picocli.CommandLine.Parameters;
 
 
 @Command(
@@ -32,11 +32,18 @@ public class App implements Callable<Integer> {
   public Integer call() {
     try {
       final Os os = detectOs();
-      System.out.println("Detected OS: " + os);
+      final ProcessHandler processHandler = new ProcessHandler.ProcessHandlerImpl();
 
-      final Chrome chrome = new Chrome(chromeLocation, os);
+      System.out.println("Detected OS: " + os);
+      final Chrome chrome = new Chrome(chromeLocation, os, processHandler);
+      final Chromedriver chromedriver = new Chromedriver(chromedriverLocation, processHandler);
+
       final Version chromeVersion = chrome.getVersion();
+      final Version chromedriverVersion = chromedriver.getVersion();
+
       System.out.println("Chrome Version: " + chromeVersion);
+      System.out.println("ChromeDriver Version: " + chromedriverVersion);
+
       return 0;
     } catch (Exception e) {
       e.printStackTrace(System.err);
