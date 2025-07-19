@@ -12,7 +12,7 @@ public class App {
       final Os os = detectOs();
       System.out.println("Detected OS: " + os);
 
-      final Chrome chrome = new Chrome("C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe", os);
+      final Chrome chrome = new Chrome("/usr/bin/google-chrome", os);
       final Version chromeVersion = chrome.getVersion();
 
       System.out.println("Chrome Version: " + chromeVersion);

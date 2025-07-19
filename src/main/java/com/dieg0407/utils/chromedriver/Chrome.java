@@ -3,6 +3,10 @@ package com.dieg0407.utils.chromedriver;
 import com.dieg0407.utils.chromedriver.model.Os;
 import com.dieg0407.utils.chromedriver.model.Version;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.concurrent.TimeUnit;
 
 public class Chrome {
   private final File chromeLocation;
@@ -34,8 +38,7 @@ public class Chrome {
         return getWindowsVersion();
       }
       case LINUX -> {
-        // TODO: Implement Linux version detection
-        throw new UnsupportedOperationException("Linux version detection is not implemented yet.");
+        return getLinuxVersion();
       }
       case MACOS -> {
         // TODO: Implement macOS version detection
@@ -44,6 +47,38 @@ public class Chrome {
       default -> {
         throw new UnsupportedOperationException("Unsupported OS: " + this.os);
       }
+    }
+  }
+
+  private Version getLinuxVersion() {
+    try {
+      final Process process = new ProcessBuilder("google-chrome", "--version")
+          .redirectErrorStream(true)
+          .start();
+      process.waitFor(5, TimeUnit.SECONDS);
+
+      // read stdout
+      try (final InputStream stream = process.getInputStream()) {
+        final byte[] bytes = stream.readAllBytes();
+        final String output = new String(bytes, StandardCharsets.UTF_8).trim();
+
+        final String[] parts = output.split(" ");
+        if (parts.length < 3) {
+          throw new IllegalArgumentException("Unexpected output format: " + output);
+        }
+
+        final String last = parts[parts.length - 1];
+        if (!last.matches("\\d+\\.\\d+\\.\\d+\\.\\d+")) {
+          throw new IllegalArgumentException("Unexpected version format: " + last);
+        }
+
+        return Version.fromRawVersion(last);
+      }
+    } catch (IOException exception) {
+      throw new RuntimeException("Failed to execute command to get Chrome version on Linux", exception);
+    } catch (InterruptedException exception) {
+      Thread.currentThread().interrupt();
+      throw new RuntimeException("Interrupted while waiting for Chrome version command to complete", exception);
     }
   }
 
