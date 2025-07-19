@@ -1,0 +1,26 @@
+# Archivos de compilación
+/target/
+*.class
+
+# Archivos de configuración de Maven
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+
+# Archivos de logs
+*.log
+
+# Archivos de IDEs
+/.idea/
+/*.iml
+*.ipr
+*.iws
+
+# Archivos de sistema
+.DS_Store
+Thumbs.db
+
+# Archivos de configuración de entorno
+.env
