@@ -44,6 +44,13 @@ public class App implements Callable<Integer> {
       System.out.println("Chrome Version: " + chromeVersion);
       System.out.println("ChromeDriver Version: " + chromedriverVersion);
 
+      if (!chromedriverVersion.isLessThan(chromeVersion)) {
+        System.out.println("ChromeDriver is up to date!");
+        return 0; // No update needed
+      }
+
+      chromedriver.updateTo(chromeVersion);
+
       return 0;
     } catch (Exception e) {
       e.printStackTrace(System.err);
