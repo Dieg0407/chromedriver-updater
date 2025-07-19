@@ -2,22 +2,45 @@ package com.dieg0407.utils.chromedriver;
 
 import com.dieg0407.utils.chromedriver.model.Os;
 import com.dieg0407.utils.chromedriver.model.Version;
+import java.util.concurrent.Callable;
+import picocli.CommandLine;
+import picocli.CommandLine.Command;
+import picocli.CommandLine.Option;
+import picocli.CommandLine.Parameters;
 
-/**
- * Hello world!
- */
-public class App {
-  public static void main(String[] args) {
+
+@Command(
+    name = "chromedriver-updater",
+    mixinStandardHelpOptions = true,
+    version = "chromedriver 1.0",
+    description = "A utility to update chromedriver"
+)
+public class App implements Callable<Integer> {
+
+  public static void main(String... args) {
+    int exitCode = new CommandLine(new App()).execute(args);
+    System.exit(exitCode);
+  }
+
+  @Option(names = { "--chrome-location", "-c" }, description = "Path to the Chrome executable", required = true)
+  private String chromeLocation;
+
+  @Option(names = { "--chromedriver-location", "-d" }, description = "Path to the ChromeDriver executable", required = true)
+  private String chromedriverLocation;
+
+  @Override
+  public Integer call() {
     try {
       final Os os = detectOs();
       System.out.println("Detected OS: " + os);
 
-      final Chrome chrome = new Chrome("/usr/bin/google-chrome", os);
+      final Chrome chrome = new Chrome(chromeLocation, os);
       final Version chromeVersion = chrome.getVersion();
-
       System.out.println("Chrome Version: " + chromeVersion);
+      return 0;
     } catch (Exception e) {
       e.printStackTrace(System.err);
+      return 1;
     }
   }
 
