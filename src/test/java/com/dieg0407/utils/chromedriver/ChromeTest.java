@@ -13,11 +13,13 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 class ChromeTest {
+
   File temporalFile;
   ProcessHandler processHandler;
 
   File tmpDir;
   File versionDir;
+
   @BeforeEach
   void setUp() throws IOException {
     // Create a temporary directory for testing
@@ -47,18 +49,22 @@ class ChromeTest {
 
   @Test
   void checkIfPathToChromeExists() {
-    Assertions.assertDoesNotThrow(() -> new Chrome(temporalFile.getAbsolutePath(), Os.LINUX, processHandler));
-    Assertions.assertThrows(IllegalArgumentException.class, () -> new Chrome(UUID.randomUUID().toString(), Os.LINUX, processHandler));
+    Assertions.assertDoesNotThrow(
+        () -> new Chrome(temporalFile.getAbsolutePath(), Os.LINUX, processHandler));
+    Assertions.assertThrows(IllegalArgumentException.class,
+        () -> new Chrome(UUID.randomUUID().toString(), Os.LINUX, processHandler));
   }
 
   @Test
   void checkIfOsIsNotNull() {
-    Assertions.assertThrows(AssertionError.class, () -> new Chrome(temporalFile.getAbsolutePath(), null, processHandler));
+    Assertions.assertThrows(AssertionError.class,
+        () -> new Chrome(temporalFile.getAbsolutePath(), null, processHandler));
   }
 
   @Test
   void checkIfProcessHandlerIsNotNull() {
-    Assertions.assertThrows(AssertionError.class, () -> new Chrome(temporalFile.getAbsolutePath(), Os.LINUX, null));
+    Assertions.assertThrows(AssertionError.class,
+        () -> new Chrome(temporalFile.getAbsolutePath(), Os.LINUX, null));
   }
 
   @Test
@@ -87,7 +93,8 @@ class ChromeTest {
   @Test
   void checkIfVersionFolderIsNotFoundInWindows() {
     final Chrome chrome = new Chrome(temporalFile.getAbsolutePath(), Os.WINDOWS, processHandler);
-    final RuntimeException ex = Assertions.assertThrows(IllegalArgumentException.class, chrome::getVersion);
+    final RuntimeException ex = Assertions.assertThrows(IllegalArgumentException.class,
+        chrome::getVersion);
 
     Assertions.assertTrue(ex.getMessage().contains("No valid version directory found in:"));
   }

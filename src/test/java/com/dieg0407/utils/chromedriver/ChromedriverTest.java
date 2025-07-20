@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 class ChromedriverTest {
+
   File temporalFile;
   ProcessHandler processHandler;
   Downloader downloader;
@@ -26,15 +27,21 @@ class ChromedriverTest {
 
   @Test
   void checkIfPathToChromeDriverExists() {
-    Assertions.assertDoesNotThrow(() -> new Chromedriver(temporalFile.getAbsolutePath(), Os.LINUX, processHandler, downloader));
-    Assertions.assertThrows(IllegalArgumentException.class, () -> new Chromedriver(UUID.randomUUID().toString(), Os.LINUX, processHandler, downloader));
+    Assertions.assertDoesNotThrow(
+        () -> new Chromedriver(temporalFile.getAbsolutePath(), Os.LINUX, processHandler,
+            downloader));
+    Assertions.assertThrows(IllegalArgumentException.class,
+        () -> new Chromedriver(UUID.randomUUID().toString(), Os.LINUX, processHandler, downloader));
   }
 
   @Test
   void checkIfProcessHandlerIsNotNull() {
-    Assertions.assertThrows(AssertionError.class, () -> new Chromedriver(temporalFile.getAbsolutePath(), Os.LINUX, null, downloader));
-    Assertions.assertThrows(AssertionError.class, () -> new Chromedriver(temporalFile.getAbsolutePath(), Os.LINUX, null, downloader));
-    Assertions.assertThrows(AssertionError.class, () -> new Chromedriver(temporalFile.getAbsolutePath(), Os.LINUX, processHandler, null));
+    Assertions.assertThrows(AssertionError.class,
+        () -> new Chromedriver(temporalFile.getAbsolutePath(), Os.LINUX, null, downloader));
+    Assertions.assertThrows(AssertionError.class,
+        () -> new Chromedriver(temporalFile.getAbsolutePath(), Os.LINUX, null, downloader));
+    Assertions.assertThrows(AssertionError.class,
+        () -> new Chromedriver(temporalFile.getAbsolutePath(), Os.LINUX, processHandler, null));
   }
 
   @Test
@@ -43,18 +50,22 @@ class ChromedriverTest {
     Mockito.when(processHandler.getOutput(Mockito.any(), Mockito.anyLong()))
         .thenReturn(mockedVersion);
 
-    final Chromedriver chromedriver = new Chromedriver(temporalFile.getAbsolutePath(), Os.LINUX, processHandler, downloader);
-    final RuntimeException ex = Assertions.assertThrows(RuntimeException.class, chromedriver::getVersion);
+    final Chromedriver chromedriver = new Chromedriver(temporalFile.getAbsolutePath(), Os.LINUX,
+        processHandler, downloader);
+    final RuntimeException ex = Assertions.assertThrows(RuntimeException.class,
+        chromedriver::getVersion);
 
     Assertions.assertTrue(ex.getMessage().contains("Unexpected output format"));
   }
+
   @Test
   void checkIfItExtractsTheVersion() throws Exception {
     final String mockedVersion = "ChromeDriver 123.456.7890.12 (randomsha)";
     Mockito.when(processHandler.getOutput(Mockito.any(), Mockito.anyLong()))
         .thenReturn(mockedVersion);
 
-    final Chromedriver chromedriver = new Chromedriver(temporalFile.getAbsolutePath(), Os.LINUX, processHandler, downloader);
+    final Chromedriver chromedriver = new Chromedriver(temporalFile.getAbsolutePath(), Os.LINUX,
+        processHandler, downloader);
     final Version expectedVersion = new Version((short) 123, (short) 456, (short) 7890, (short) 12);
     Assertions.assertEquals(expectedVersion, chromedriver.getVersion());
 
