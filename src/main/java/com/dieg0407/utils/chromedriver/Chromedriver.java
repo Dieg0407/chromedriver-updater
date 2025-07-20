@@ -7,9 +7,14 @@ import com.dieg0407.utils.chromedriver.model.Os;
 import com.dieg0407.utils.chromedriver.model.ProcessHandler;
 import com.dieg0407.utils.chromedriver.model.Version;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 public class Chromedriver {
 
@@ -90,12 +95,76 @@ public class Chromedriver {
           "Downloading ChromeDriver version %s for %s into %s\n",
           chromeVersion.identifier(), type, downloadFileName
       );
-      downloader.download(downloadUrl, new File(versionsFolder, downloadFileName));
+
+      final File zipFile = downloader.download(downloadUrl,
+          new File(versionsFolder, downloadFileName));
+      if (!zipFile.exists()) {
+        throw new RuntimeException("Failed to download ChromeDriver: " + zipFile.getAbsolutePath());
+      }
 
       System.out.printf("Downloaded ChromeDriver version %s for %s into %s\n",
           chromeVersion.identifier(), type, downloadFileName);
-    } catch (URISyntaxException e) {
+
+      File extractedFile = null;
+      try (InputStream inputStream = new FileInputStream(zipFile);
+          ZipInputStream zipInputStream = new ZipInputStream(inputStream)) {
+
+        ZipEntry zipEntry = zipInputStream.getNextEntry();
+        while (zipEntry != null) {
+          System.out.printf("Processing entry: %s\n", zipEntry.getName());
+          if (!zipEntry.isDirectory() && zipEntry.getName().endsWith("/chromedriver") ||
+              zipEntry.getName().endsWith("/chromedriver.exe")) {
+
+            extractedFile = new File(versionsFolder, "chromedriver");
+            if (extractedFile.exists() && !extractedFile.delete()) {
+              throw new RuntimeException(
+                  "Failed to delete existing chromedriver: " + extractedFile.getAbsolutePath());
+            }
+            try (var outputStream = new FileOutputStream(extractedFile)) {
+              byte[] buffer = new byte[1024];
+              int len;
+              while ((len = zipInputStream.read(buffer)) > 0) {
+                outputStream.write(buffer, 0, len);
+              }
+            }
+            System.out.printf("Extracted ChromeDriver to %s\n", extractedFile.getAbsolutePath());
+            break;
+          }
+          zipEntry = zipInputStream.getNextEntry();
+        }
+      }
+
+      if (extractedFile == null || !extractedFile.exists()) {
+        throw new RuntimeException(
+            "Failed to extract ChromeDriver from zip file: " + zipFile.getAbsolutePath());
+      }
+
+      // replace the existing chromedriver with the new one
+      if (chromedriverLocation.exists() && !chromedriverLocation.delete()) {
+        throw new RuntimeException(
+            "Failed to delete existing chromedriver: " + chromedriverLocation.getAbsolutePath());
+      }
+
+      if (!extractedFile.renameTo(chromedriverLocation)) {
+        throw new RuntimeException("Failed to rename extracted chromedriver to: "
+            + chromedriverLocation.getAbsolutePath());
+      }
+
+      System.out.printf("Updated ChromeDriver to version %s at %s\n",
+          chromeVersion.identifier(), chromedriverLocation.getAbsolutePath());
+
+      // if linux execute chmod +x
+      if (os == Os.LINUX) {
+        ProcessBuilder chmodBuilder = new ProcessBuilder("chmod", "+x",
+            chromedriverLocation.getAbsolutePath());
+        processHandler.getOutput(chmodBuilder, 5000);
+        System.out.println("Set executable permissions for ChromeDriver on Linux.");
+      }
+    } catch (URISyntaxException | IOException e) {
       throw new RuntimeException(e);
+    } catch (InterruptedException e) {
+      Thread.currentThread().interrupt();
+      throw new RuntimeException("Update interrupted", e);
     }
   }
 

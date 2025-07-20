@@ -44,6 +44,7 @@ java -jar target/chromedriver-updater-<version>.jar -c <path-to-chrome> -d <path
 * Obtain the version from chromedriver ✅
 * Compare the version and detect if an update is needed ✅
 * Download chromedriver binary ✅
-* Extract and replace the existing chromedriver binary
+* Extract and replace the existing chromedriver binary ✅
+* Automated test on windows and linux 
 * Add support for macOS
 * Check if native compilation is possible and if so add it.
