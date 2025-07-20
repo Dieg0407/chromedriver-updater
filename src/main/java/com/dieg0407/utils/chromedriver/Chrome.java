@@ -7,17 +7,20 @@ import java.io.File;
 import java.io.IOException;
 
 public class Chrome {
+
   private final File chromeLocation;
   private final ProcessHandler processHandler;
   private final Os os;
 
   /**
-   * Constructs a Chrome instance with the specified location, operating system, and process handler.
+   * Constructs a Chrome instance with the specified location, operating system, and process
+   * handler.
    *
-   * @param location the file path to the Chrome executable
-   * @param os the operating system on which Chrome is running
+   * @param location       the file path to the Chrome executable
+   * @param os             the operating system on which Chrome is running
    * @param processHandler the handler for executing processes
-   * @throws IllegalArgumentException if the file does not exist at the specified location or if any parameter is null
+   * @throws IllegalArgumentException if the file does not exist at the specified location or if any
+   *                                  parameter is null
    */
   public Chrome(final String location, final Os os, final ProcessHandler processHandler)
       throws IllegalArgumentException {
@@ -55,23 +58,27 @@ public class Chrome {
 
   private Version getLinuxVersion() {
     try {
-      final ProcessBuilder builder = new ProcessBuilder(chromeLocation.getAbsolutePath(), "--version")
+      final ProcessBuilder builder = new ProcessBuilder(chromeLocation.getAbsolutePath(),
+          "--version")
           .redirectErrorStream(true);
 
       final String output = this.processHandler.getOutput(builder, 5_000).trim();
       final String[] parts = output.split(" ");
       if (parts.length < 3) {
-        throw new IllegalArgumentException("Unexpected output format: '" + output + "'. Expected format: 'Google Chrome X.Y.Z.W'");
+        throw new IllegalArgumentException(
+            "Unexpected output format: '" + output + "'. Expected format: 'Google Chrome X.Y.Z.W'");
       }
 
       final String last = parts[parts.length - 1];
 
       return Version.fromRawVersion(last);
     } catch (IOException exception) {
-      throw new RuntimeException("Failed to execute command to get Chrome version on Linux", exception);
+      throw new RuntimeException("Failed to execute command to get Chrome version on Linux",
+          exception);
     } catch (InterruptedException exception) {
       Thread.currentThread().interrupt();
-      throw new RuntimeException("Interrupted while waiting for Chrome version command to complete", exception);
+      throw new RuntimeException("Interrupted while waiting for Chrome version command to complete",
+          exception);
     }
   }
 

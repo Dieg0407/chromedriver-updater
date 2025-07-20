@@ -23,10 +23,12 @@ public class App implements Callable<Integer> {
     System.exit(exitCode);
   }
 
-  @Option(names = { "--chrome-location", "-c" }, description = "Path to the Chrome executable", required = true)
+  @Option(names = {"--chrome-location",
+      "-c"}, description = "Path to the Chrome executable", required = true)
   private String chromeLocation;
 
-  @Option(names = { "--chromedriver-location", "-d" }, description = "Path to the ChromeDriver executable", required = true)
+  @Option(names = {"--chromedriver-location",
+      "-d"}, description = "Path to the ChromeDriver executable", required = true)
   private String chromedriverLocation;
 
   @Override
@@ -38,7 +40,8 @@ public class App implements Callable<Integer> {
 
       System.out.println("Detected OS: " + os);
       final Chrome chrome = new Chrome(chromeLocation, os, processHandler);
-      final Chromedriver chromedriver = new Chromedriver(chromedriverLocation, os, processHandler, downloader);
+      final Chromedriver chromedriver = new Chromedriver(chromedriverLocation, os, processHandler,
+          downloader);
 
       final Version chromeVersion = chrome.getVersion();
       final Version chromedriverVersion = chromedriver.getVersion();
@@ -50,7 +53,7 @@ public class App implements Callable<Integer> {
         System.out.println("ChromeDriver is up to date!");
         return 0; // No update needed
       }
-
+      System.out.println("Upgrade needed!");
       chromedriver.updateTo(chromeVersion);
 
       return 0;

@@ -6,9 +6,12 @@ public record Version(
     short patch,
     short build
 ) {
+
   public static Version fromRawVersion(String version) {
     if (!version.matches("\\d+\\.\\d+\\.\\d+\\.\\d+")) {
-      throw new IllegalArgumentException("Version string must be in the format 'major.minor.patch.build' instead got: '" + version + "'");
+      throw new IllegalArgumentException(
+          "Version string must be in the format 'major.minor.patch.build' instead got: '" + version
+              + "'");
     }
     final String[] parts = version.split("\\.");
     assert parts.length == 4 : "raw version should have exactly 4 parts";
@@ -22,8 +25,9 @@ public record Version(
   }
 
   /**
-   * Checks if this version is less than the other version.
-   * It doesn't check the build number or the patch
+   * Checks if this version is less than the other version. It doesn't check the build number or the
+   * patch
+   *
    * @param other the other version to compare with
    * @return true if this version is less than the other version, false otherwise
    */
@@ -38,6 +42,7 @@ public record Version(
 
   /**
    * Returns a string representation of the version in the format "major.minor.patch.build".
+   *
    * @return a string representation of the version
    */
   public String identifier() {
