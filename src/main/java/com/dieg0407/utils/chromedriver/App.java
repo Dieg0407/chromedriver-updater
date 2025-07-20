@@ -1,5 +1,6 @@
 package com.dieg0407.utils.chromedriver;
 
+import com.dieg0407.utils.chromedriver.model.Downloader;
 import com.dieg0407.utils.chromedriver.model.Os;
 import com.dieg0407.utils.chromedriver.model.ProcessHandler;
 import com.dieg0407.utils.chromedriver.model.Version;
@@ -33,10 +34,11 @@ public class App implements Callable<Integer> {
     try {
       final Os os = detectOs();
       final ProcessHandler processHandler = new ProcessHandler.ProcessHandlerImpl();
+      final Downloader downloader = new Downloader.DownloaderImpl();
 
       System.out.println("Detected OS: " + os);
       final Chrome chrome = new Chrome(chromeLocation, os, processHandler);
-      final Chromedriver chromedriver = new Chromedriver(chromedriverLocation, processHandler);
+      final Chromedriver chromedriver = new Chromedriver(chromedriverLocation, os, processHandler, downloader);
 
       final Version chromeVersion = chrome.getVersion();
       final Version chromedriverVersion = chromedriver.getVersion();

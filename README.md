@@ -41,8 +41,8 @@ java -jar target/chromedriver-updater-<version>.jar -c <path-to-chrome> -d <path
 * Detect chrome version ✅
   * On windows ✅
   * On linux ✅
-* Obtain the version from chromedriver
-* Compare the version and detect if an update is needed
+* Obtain the version from chromedriver ✅
+* Compare the version and detect if an update is needed ✅
 * Download and replace the chromedriver binary
 * Add support for macOS
 * Check if native compilation is possible and if so add it.

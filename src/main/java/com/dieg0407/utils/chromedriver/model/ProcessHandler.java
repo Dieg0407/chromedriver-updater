@@ -18,7 +18,7 @@ public interface ProcessHandler {
    */
   String getOutput(final ProcessBuilder processBuilder, final long timeoutInMillis) throws IOException, InterruptedException;
 
-  public static class ProcessHandlerImpl implements ProcessHandler {
+  class ProcessHandlerImpl implements ProcessHandler {
     @Override
     public String getOutput(final ProcessBuilder processBuilder, final long timeoutInMillis) throws IOException, InterruptedException {
       assert processBuilder != null : "ProcessBuilder cannot be null";
