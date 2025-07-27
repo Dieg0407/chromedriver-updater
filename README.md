@@ -46,5 +46,6 @@ java -jar target/chromedriver-updater-<version>.jar -c <path-to-chrome> -d <path
 * Download chromedriver binary ✅
 * Extract and replace the existing chromedriver binary ✅
 * Automated test on windows and linux 
-* Add support for macOS
-* Check if native compilation is possible and if so add it.
+* ~~Add support for macOS~~
+* ~~Check if native compilation is possible and if so add it.~~ (GraalVM doesn't support native compilation
+ for Windows from a linux host, this makes this process complicated and not worth the effort for now, maybe a version of this tool in another program like Go or Rust can be made in the future)
